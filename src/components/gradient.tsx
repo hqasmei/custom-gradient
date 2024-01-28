@@ -7,8 +7,8 @@ import { Wand2, Plus, Trash2 } from "lucide-react";
 import { generateGradientWithStops } from "@/utils";
 import { steps } from "@/consts";
 const GradientPage: React.FC = () => {
-  const [width, setWidth] = useState(1200);
-  const [height, setHeight] = useState(630);
+  const [width, setWidth] = useState(1280);
+  const [height, setHeight] = useState(720);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [blurEffect, setBlurEffect] = useState(false);
   const [gradientDirection, setGradientDirection] = useState("to right bottom");
