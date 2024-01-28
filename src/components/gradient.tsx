@@ -1,54 +1,21 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-
+import { gradientDirections } from "@/consts";
+import { predefinedColorCombinations } from "@/consts";
+import { Wand2, Plus, Trash2 } from "lucide-react";
+import { generateGradientWithStops } from "@/utils";
+import { steps } from "@/consts";
 const GradientPage: React.FC = () => {
   const [width, setWidth] = useState(1200);
   const [height, setHeight] = useState(630);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [blurEffect, setBlurEffect] = useState(false);
   const [gradientDirection, setGradientDirection] = useState("to right bottom");
-  const gradientDirections = [
-    {
-      direction: "to right",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>', // Replace with actual SVG markup or path
-    },
-    {
-      direction: "to left",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>',
-    },
-    {
-      direction: "to bottom",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-down"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>',
-    },
-    {
-      direction: "to top",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-up"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>',
-    },
-    {
-      direction: "to right bottom",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-down-right"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg>',
-    },
-    {
-      direction: "to right top",
-      svg: '<svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>',
-    },
-    {
-      direction: "to left bottom",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-down-left"><path d="M17 7 7 17"/><path d="M17 17H7V7"/></svg>',
-    },
-    {
-      direction: "to left top",
-      svg: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-arrow-up-left"><path d="M7 17V7h10"/><path d="M17 17 7 7"/></svg>',
-    },
-  ];
 
-  const [colorStops, setColorStops] = useState([
-    { stop: 0, color: "#051937" },
-    { stop: 0.25, color: "#223366" },
-    { stop: 0.5, color: "#484d98" },
-    { stop: 0.75, color: "#7766ca" },
-    { stop: 1, color: "#ad7ffb" },
-  ]);
+  const [colorStops, setColorStops] = useState(
+    generateGradientWithStops("#0093e9", "#80d0c7", 4)
+  );
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,6 +56,8 @@ const GradientPage: React.FC = () => {
             [x0, y0, x1, y1] = [0, 0, width, height]; // Default to 'to right bottom'
         }
 
+        ctx.filter = blurEffect ? "blur(10px)" : "none";
+
         // Create the gradient
         const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
         colorStops.forEach((stop) => {
@@ -100,7 +69,22 @@ const GradientPage: React.FC = () => {
         ctx.fillRect(0, 0, width, height);
       }
     }
-  }, [width, height, colorStops, gradientDirection]);
+  }, [width, height, colorStops, gradientDirection, blurEffect]);
+
+  
+  const randomizeColorCombination = () => {
+    const randomIndex = Math.floor(
+      Math.random() * predefinedColorCombinations.length
+    );
+
+    const colors = predefinedColorCombinations[randomIndex];
+    const output = generateGradientWithStops(
+      colors.color1,
+      colors.color2,
+      steps
+    );
+    setColorStops(output);
+  };
 
   const setDirection = (direction: string) => {
     setGradientDirection(direction);
@@ -156,12 +140,28 @@ const GradientPage: React.FC = () => {
       <canvas
         ref={canvasRef}
         style={{ width: `${width}px`, height: `${height}px` }}
+        className="relative"
       ></canvas>
+
       <div className="flex flex-col space-y-4  w-full max-w-7xl border p-4 rounded-md">
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 break-words min-w-0">
           {/* Color */}
           <div className="flex flex-col space-y-2">
             <span className="font-semibold text-lg">Color</span>
+            <div className="flex flex-row space-x-2 items-center">
+              <button
+                onClick={addColorStop}
+                className="bg-blue-600 hover:bg-blue-500 duration-200 text-sm text-white p-2 rounded-md"
+              >
+                <Plus />
+              </button>
+              <button
+                onClick={randomizeColorCombination}
+                className="bg-black hover:bg-neutral-600 duration-200 rounded-md p-2"
+              >
+                <Wand2 color="white" />
+              </button>
+            </div>
             <div className="flex flex-col space-y-2 items-start">
               {colorStops.map((colorStop, index) => (
                 <div
@@ -189,36 +189,13 @@ const GradientPage: React.FC = () => {
                     onChange={(e) =>
                       updateColorStop(index, colorStop.stop, e.target.value)
                     }
-                    className=""
+                    className=" "
                   />
                   <button onClick={() => removeColorStop(index)} className="">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="red"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-trash-2"
-                    >
-                      <path d="M3 6h18" />
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                      <line x1="10" x2="10" y1="11" y2="17" />
-                      <line x1="14" x2="14" y1="11" y2="17" />
-                    </svg>
+                    <Trash2 color="red" />
                   </button>
                 </div>
               ))}
-              <button
-                onClick={addColorStop}
-                className="bg-blue-600 text-sm text-white p-2 rounded-md"
-              >
-                + Add Color Stop
-              </button>
             </div>
           </div>
 
@@ -274,11 +251,26 @@ const GradientPage: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setDirection(item.direction)}
-                  className="bg-black text-white p-2 rounded-full m-1"
+                  className="bg-black text-white p-2 rounded-full m-1 hover:bg-neutral-600 duration-200 "
                 >
-                  <span dangerouslySetInnerHTML={{ __html: item.svg }} />
+                  {item.svg}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Effects */}
+          <div className="flex flex-col space-y-2">
+            <span className="font-semibold text-lg">Effects</span>
+            <div className="flex flex-col space-y-2 text-sm">
+              <div>
+                <button
+                  onClick={() => setBlurEffect(!blurEffect)}
+                  className="bg-black text-white p-2 rounded-md "
+                >
+                  {blurEffect ? "Remove Blur" : "Apply Gaussian Blur"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
