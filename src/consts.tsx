@@ -12,35 +12,35 @@ import {
 export const gradientDirections = [
   {
     direction: "to right",
-    svg: <ArrowRight />,
+    svg: <ArrowRight size={16} />,
   },
   {
     direction: "to left",
-    svg: <ArrowLeft />,
+    svg: <ArrowLeft size={16} />,
   },
   {
     direction: "to bottom",
-    svg: <ArrowDown />,
+    svg: <ArrowDown size={16} />,
   },
   {
     direction: "to top",
-    svg: <ArrowUp />,
+    svg: <ArrowUp size={16} />,
   },
   {
     direction: "to right bottom",
-    svg: <ArrowDownRight />,
+    svg: <ArrowDownRight size={16} />,
   },
   {
     direction: "to right top",
-    svg: <ArrowUpRight />,
+    svg: <ArrowUpRight size={16} />,
   },
   {
     direction: "to left bottom",
-    svg: <ArrowDownLeft />,
+    svg: <ArrowDownLeft size={16} />,
   },
   {
     direction: "to left top",
-    svg: <ArrowUpLeft />,
+    svg: <ArrowUpLeft size={16} />,
   },
 ];
 
