@@ -6,9 +6,10 @@ import { predefinedColorCombinations } from "@/consts";
 import { Wand2, Plus, Trash2 } from "lucide-react";
 import { generateGradientWithStops } from "@/utils";
 import { steps } from "@/consts";
+
 const GradientPage: React.FC = () => {
-  const [width, setWidth] = useState(1280);
-  const [height, setHeight] = useState(720);
+  const [width, setWidth] = useState(900);
+  const [height, setHeight] = useState(500);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [blurEffect, setBlurEffect] = useState(false);
   const [gradientDirection, setGradientDirection] = useState("to right bottom");
@@ -71,7 +72,6 @@ const GradientPage: React.FC = () => {
     }
   }, [width, height, colorStops, gradientDirection, blurEffect]);
 
-  
   const randomizeColorCombination = () => {
     const randomIndex = Math.floor(
       Math.random() * predefinedColorCombinations.length
@@ -136,30 +136,26 @@ const GradientPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col space-y-6 w-full items-center justify-center">
-      <canvas
-        ref={canvasRef}
-        style={{ width: `${width}px`, height: `${height}px` }}
-        className="relative"
-      ></canvas>
-
-      <div className="flex flex-col space-y-4  w-full max-w-7xl border p-4 rounded-md">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 break-words min-w-0">
+    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between p-6">
+      <aside className="w-full lg:w-1/4 lg:mr-4 h-full overflow-y-auto">
+        <div className="flex flex-col space-y-4 w-full max-w-7xl border p-4 rounded-md max-h-full">
           {/* Color */}
           <div className="flex flex-col space-y-2">
-            <span className="font-semibold text-lg">Color</span>
+            <span className="font-semibold text-base">Color</span>
             <div className="flex flex-row space-x-2 items-center">
               <button
+                title="Plus"
                 onClick={addColorStop}
                 className="bg-blue-600 hover:bg-blue-500 duration-200 text-sm text-white p-2 rounded-md"
               >
-                <Plus />
+                <Plus size={16} />
               </button>
               <button
+                title="Wand2"
                 onClick={randomizeColorCombination}
                 className="bg-black hover:bg-neutral-600 duration-200 rounded-md p-2"
               >
-                <Wand2 color="white" />
+                <Wand2 size={16} color="white" />
               </button>
             </div>
             <div className="flex flex-col space-y-2 items-start">
@@ -169,6 +165,7 @@ const GradientPage: React.FC = () => {
                   className="flex flex-row space-x-4 items-center"
                 >
                   <input
+                    placeholder="color"
                     type="number"
                     value={colorStop.stop}
                     onChange={(e) =>
@@ -184,14 +181,19 @@ const GradientPage: React.FC = () => {
                     className="border rounded p-1"
                   />
                   <input
+                    placeholder="color"
                     type="color"
                     value={colorStop.color}
                     onChange={(e) =>
                       updateColorStop(index, colorStop.stop, e.target.value)
                     }
-                    className=" "
+                    className=""
                   />
-                  <button onClick={() => removeColorStop(index)} className="">
+                  <button
+                    title="Trash2"
+                    onClick={() => removeColorStop(index)}
+                    className=""
+                  >
                     <Trash2 color="red" />
                   </button>
                 </div>
@@ -202,23 +204,25 @@ const GradientPage: React.FC = () => {
           {/* Size */}
           <div className="flex flex-col">
             <div className="flex flex-col space-y-2">
-              <span className="font-semibold text-lg">Size</span>
+              <span className="font-semibold text-base">Size</span>
               <div className="flex flex-row space-x-2 items-center">
                 <label>Width: </label>
                 <input
+                  placeholder="Width"
                   type="number"
                   value={width}
                   onChange={handleWidthChange}
-                  className="border rounded p-1"
+                  className="border rounded p-1 w-2/3"
                 />
               </div>
               <div className="flex flex-row space-x-2">
                 <label>Height: </label>
                 <input
+                  placeholder="Height"
                   type="number"
                   value={height}
                   onChange={handleHeightChange}
-                  className="border rounded p-1"
+                  className="border rounded p-1 w-2/3"
                 />
               </div>
             </div>
@@ -243,25 +247,9 @@ const GradientPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Direction */}
-          <div className="flex flex-col space-y-2">
-            <span className="font-semibold text-lg">Direction</span>
-            <div className="flex flex-wrap">
-              {gradientDirections.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => setDirection(item.direction)}
-                  className="bg-black text-white p-2 rounded-full m-1 hover:bg-neutral-600 duration-200 "
-                >
-                  {item.svg}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Effects */}
           <div className="flex flex-col space-y-2">
-            <span className="font-semibold text-lg">Effects</span>
+            <span className="font-semibold text-base">Effects</span>
             <div className="flex flex-col space-y-2 text-sm">
               <div>
                 <button
@@ -274,34 +262,62 @@ const GradientPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </aside>
 
-        <div className="justify-end flex">
-          <button
-            onClick={downloadImage}
-            className="bg-black text-white p-2 rounded-md flex flex-row items-center space-x-3 hover:bg-neutral-700"
-          >
-            <span>Download as PNG</span>
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-download"
+      <main className="w-full lg:w-3/4 flex items-center justify-center">
+        <div>
+          <div className="flex flex-col lg:flex-row items-center justify-between pb-6">
+            <div className="lg:mr-4">
+              {/* Direction */}
+              <div className="flex flex-col space-y-2">
+                <span className="font-semibold text-base pt-4">Direction</span>
+                <div className="flex flex-wrap">
+                  {gradientDirections.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setDirection(item.direction)}
+                      className="bg-black text-white p-1 rounded-full m-1 hover:bg-neutral-600 duration-200 "
+                    >
+                      {item.svg}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div>
+              <button
+                onClick={downloadImage}
+                className="bg-black text-white p-2 rounded-md flex flex-row items-center space-x-3 hover:bg-neutral-700"
               >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" x2="12" y1="15" y2="3" />
-              </svg>
-            </span>
-          </button>
+                <span className="text-sm">Download as PNG</span>
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-download"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <canvas
+            ref={canvasRef}
+            style={{ width: `${width}px`, height: `${height}px` }}
+            className="w-3/4"
+          ></canvas>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
