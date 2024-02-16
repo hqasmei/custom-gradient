@@ -1,4 +1,4 @@
-## Gradient PNG Generator
+## Custom Gradient
 
 Turn your creativity into colors: Try our PNG Gradient Generator!
 

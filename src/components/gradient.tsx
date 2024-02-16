@@ -1,27 +1,31 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import { gradientDirections } from "@/consts";
-import { predefinedColorCombinations } from "@/consts";
-import { Wand2, Plus, Trash2 } from "lucide-react";
-import { generateGradientWithStops } from "@/utils";
-import { steps } from "@/consts";
+import { useEffect, useRef, useState } from 'react';
+
+import {
+  gradientDirections,
+  predefinedColorCombinations,
+  steps,
+} from '@/consts';
+import { useDownloadTrigger } from '@/hooks/use-download-image';
+import { generateGradientWithStops } from '@/utils';
+import { Plus, Trash2, Wand2 } from 'lucide-react';
 
 const GradientPage: React.FC = () => {
   const [width, setWidth] = useState(900);
   const [height, setHeight] = useState(500);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [blurEffect, setBlurEffect] = useState(false);
-  const [gradientDirection, setGradientDirection] = useState("to right bottom");
+  const [gradientDirection, setGradientDirection] = useState('to right bottom');
 
   const [colorStops, setColorStops] = useState(
-    generateGradientWithStops("#0093e9", "#80d0c7", 4)
+    generateGradientWithStops('#0093e9', '#80d0c7', 4),
   );
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas && canvas.getContext) {
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         canvas.width = width;
         canvas.height = height;
@@ -29,35 +33,35 @@ const GradientPage: React.FC = () => {
         // Determine start and end points based on gradientDirection
         let x0, y0, x1, y1;
         switch (gradientDirection) {
-          case "to right":
+          case 'to right':
             [x0, y0, x1, y1] = [0, 0, width, 0];
             break;
-          case "to left":
+          case 'to left':
             [x0, y0, x1, y1] = [width, 0, 0, 0];
             break;
-          case "to bottom":
+          case 'to bottom':
             [x0, y0, x1, y1] = [0, 0, 0, height];
             break;
-          case "to top":
+          case 'to top':
             [x0, y0, x1, y1] = [0, height, 0, 0];
             break;
-          case "to right bottom":
+          case 'to right bottom':
             [x0, y0, x1, y1] = [0, 0, width, height];
             break;
-          case "to right top":
+          case 'to right top':
             [x0, y0, x1, y1] = [0, height, width, 0];
             break;
-          case "to left bottom":
+          case 'to left bottom':
             [x0, y0, x1, y1] = [width, 0, 0, height];
             break;
-          case "to left top":
+          case 'to left top':
             [x0, y0, x1, y1] = [width, height, 0, 0];
             break;
           default:
             [x0, y0, x1, y1] = [0, 0, width, height]; // Default to 'to right bottom'
         }
 
-        ctx.filter = blurEffect ? "blur(10px)" : "none";
+        ctx.filter = blurEffect ? 'blur(10px)' : 'none';
 
         // Create the gradient
         const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
@@ -74,14 +78,14 @@ const GradientPage: React.FC = () => {
 
   const randomizeColorCombination = () => {
     const randomIndex = Math.floor(
-      Math.random() * predefinedColorCombinations.length
+      Math.random() * predefinedColorCombinations.length,
     );
 
     const colors = predefinedColorCombinations[randomIndex];
     const output = generateGradientWithStops(
       colors.color1,
       colors.color2,
-      steps
+      steps,
     );
     setColorStops(output);
   };
@@ -104,7 +108,7 @@ const GradientPage: React.FC = () => {
   };
 
   const addColorStop = () => {
-    setColorStops([...colorStops, { stop: 0.5, color: "#ffffff" }]);
+    setColorStops([...colorStops, { stop: 0.5, color: '#ffffff' }]);
   };
 
   const removeColorStop = (index: number) => {
@@ -123,20 +127,20 @@ const GradientPage: React.FC = () => {
   const downloadImage = () => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const image = canvas.toDataURL("image/png");
+      const image = canvas.toDataURL('image/png');
 
       // Create a link and set the URL and download attributes
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = image;
-      link.download = "gradient-image.png";
+      link.download = 'gradient-image.png';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
   };
-
+  useDownloadTrigger(downloadImage);
   return (
-    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between p-6">
+    <div className="flex flex-col md:flex-row md:items-start md:justify-between py-6 w-full">
       <aside className="w-full lg:w-1/4 lg:mr-4 h-full overflow-y-auto">
         <div className="flex flex-col space-y-4 w-full max-w-7xl border p-4 rounded-md max-h-full">
           {/* Color */}
@@ -172,7 +176,7 @@ const GradientPage: React.FC = () => {
                       updateColorStop(
                         index,
                         Number(e.target.value),
-                        colorStop.color
+                        colorStop.color,
                       )
                     }
                     min="0"
@@ -197,6 +201,22 @@ const GradientPage: React.FC = () => {
                     <Trash2 color="red" />
                   </button>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Direction */}
+          <div className="flex flex-col space-y-2">
+            <span className="font-semibold text-base pt-4">Direction</span>
+            <div className="flex flex-wrap">
+              {gradientDirections.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => setDirection(item.direction)}
+                  className="bg-black text-white p-1 rounded-full m-1 hover:bg-neutral-600 duration-200 "
+                >
+                  {item.svg}
+                </button>
               ))}
             </div>
           </div>
@@ -256,7 +276,7 @@ const GradientPage: React.FC = () => {
                   onClick={() => setBlurEffect(!blurEffect)}
                   className="bg-black text-white p-2 rounded-md "
                 >
-                  {blurEffect ? "Remove Blur" : "Apply Gaussian Blur"}
+                  {blurEffect ? 'Remove Blur' : 'Apply Gaussian Blur'}
                 </button>
               </div>
             </div>
@@ -266,55 +286,10 @@ const GradientPage: React.FC = () => {
 
       <main className="w-full lg:w-3/4 flex items-center justify-center">
         <div>
-          <div className="flex flex-col lg:flex-row items-center justify-between pb-6">
-            <div className="lg:mr-4">
-              {/* Direction */}
-              <div className="flex flex-col space-y-2">
-                <span className="font-semibold text-base pt-4">Direction</span>
-                <div className="flex flex-wrap">
-                  {gradientDirections.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setDirection(item.direction)}
-                      className="bg-black text-white p-1 rounded-full m-1 hover:bg-neutral-600 duration-200 "
-                    >
-                      {item.svg}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div>
-              <button
-                onClick={downloadImage}
-                className="bg-black text-white p-2 rounded-md flex flex-row items-center space-x-3 hover:bg-neutral-700"
-              >
-                <span className="text-sm">Download as PNG</span>
-                <span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-download"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" x2="12" y1="15" y2="3" />
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
           <canvas
             ref={canvasRef}
             style={{ width: `${width}px`, height: `${height}px` }}
-            className="w-3/4"
+            className="rounded"
           ></canvas>
         </div>
       </main>

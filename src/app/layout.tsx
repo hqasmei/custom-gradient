@@ -1,18 +1,23 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../styles/globals.css";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
-const inter = Inter({ subsets: ["latin"] });
+import '../styles/globals.css';
+
+import Header from '@/components/header';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://gradient-png-generator.vercel.app/'),
-  title: { default: 'Gradient PNG Generator', template: '' },
-  description: 'Turn your creativity into colors: Try our PNG Gradient Generator!',
+  title: { default: 'Custom Gradient', template: '' },
+  description:
+    'Turn your creativity into colors: Try our PNG Gradient Generator!',
   openGraph: {
-    title: 'Gradient PNG Generator',
-    description: 'Turn your creativity into colors: Try our PNG Gradient Generator!.',
+    title: 'Custom Gradient',
+    description:
+      'Turn your creativity into colors: Try our PNG Gradient Generator!.',
     url: 'https://gradient-png-generator.vercel.app/',
-    siteName: 'Gradient PNG Generator',
+    siteName: 'Custom Gradient',
     locale: 'en_US',
     type: 'website',
   },
@@ -28,11 +33,10 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: 'Gradient PNG Generator',
+    title: 'Custom Gradient',
     card: 'summary_large_image',
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -41,7 +45,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        <link
+          rel="icon"
+          href="/icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-icon?<generated>"
+          type="image/<generated>"
+          sizes="<generated>"
+        />
+      </head>
+      <body className={inter.className}>
+        <Header />
+        <main className="flex min-h-screen flex-col items-center justify-between container  max-w-screen-2xl">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
