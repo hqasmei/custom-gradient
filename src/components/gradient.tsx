@@ -11,6 +11,8 @@ import { useDownloadTrigger } from '@/hooks/use-download-image';
 import { generateGradientWithStops } from '@/utils';
 import { Plus, Trash2, Wand2 } from 'lucide-react';
 
+import { Button } from './ui/button';
+
 const GradientPage: React.FC = () => {
   const [width, setWidth] = useState(900);
   const [height, setHeight] = useState(500);
@@ -132,17 +134,36 @@ const GradientPage: React.FC = () => {
       // Create a link and set the URL and download attributes
       const link = document.createElement('a');
       link.href = image;
-      link.download = 'gradient-image.png';
+      link.download = 'image.png';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
   };
-  useDownloadTrigger(downloadImage);
+
+  const handleRatioWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newWidth = Number(e.target.value);
+    const aspectRatio = width / height;
+    const newHeight = newWidth / aspectRatio;
+    if (newWidth <= 900 && newHeight <= 500) {
+      setWidth(newWidth);
+      setHeight(newHeight);
+    }
+  };
+
+  const handleRatioHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newHeight = Number(e.target.value);
+    const aspectRatio = width / height;
+    const newWidth = newHeight * aspectRatio;
+    if (newWidth <= 900 && newHeight <= 500) {
+      setHeight(newHeight);
+      setWidth(newWidth);
+    }
+  };
   return (
-    <div className="flex flex-col md:flex-row md:items-start md:justify-between py-6 w-full">
-      <aside className="w-full lg:w-1/4 lg:mr-4 h-full overflow-y-auto">
-        <div className="flex flex-col space-y-4 w-full max-w-7xl border p-4 rounded-md max-h-full">
+    <div className="flex flex-col-reverse md:flex-row md:space-x-6 md:items-start md:justify-between pt-6 w-full flex-1">
+      <aside className="w-full lg:w-1/4 lg:mr-4 h-full overflow-y-auto z-10 border bg-white shadow-lg rounded-lg">
+        <div className="flex flex-col space-y-4 w-full max-w-7xl p-6 max-h-full">
           {/* Color */}
           <div className="flex flex-col space-y-2">
             <span className="font-semibold text-base">Color</span>
@@ -281,15 +302,66 @@ const GradientPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Controls */}
+          <div className="flex flex-row space-x-4 justify-between">
+            <div className="flex flex-row items-center justify-between space-x-2">
+              <Button
+                variant="outline"
+                onClick={downloadImage}
+                className="flex flex-row space-x-2 items-center justify-center"
+              >
+                <span className="text-sm">Download</span>
+                <span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-download"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" x2="12" y1="15" y2="3" />
+                  </svg>
+                </span>
+              </Button>
+            </div>
+            <div className="flex flex-row items-center bg-white">
+              <button
+                onClick={() => {
+                  setWidth(width * 0.9);
+                  setHeight(height * 0.9);
+                }}
+                className="py-2 px-4 text-lg border-y border-l rounded-l-md"
+              >
+                -
+              </button>
+              <button
+                onClick={() => {
+                  setWidth(width * 1.1);
+                  setHeight(height * 1.1);
+                }}
+                className="py-2 text-lg px-4 border rounded-r-md"
+              >
+                +
+              </button>
+            </div>
+          </div>
         </div>
       </aside>
 
-      <main className="w-full lg:w-3/4 flex items-center justify-center">
+      <main className="mb-4 md:mb-0 w-full lg:w-3/4 flex items-center justify-center">
         <div>
           <canvas
             ref={canvasRef}
             style={{ width: `${width}px`, height: `${height}px` }}
-            className="rounded"
+            className="rounded-lg max-w-full max-h-full"
           ></canvas>
         </div>
       </main>
